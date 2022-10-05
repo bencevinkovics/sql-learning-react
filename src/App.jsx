@@ -10,9 +10,6 @@ function App() {
     const [myData, setMyData] = useState(null);
     //ideiglenes default value
     const [queryString, setQueryString] = useState("SELECT * FROM test");
-    //const [headers, setHeaders] = useState([]);
-
-
     let probaertek;
 
 
@@ -38,76 +35,35 @@ function App() {
 
         //await db.registerFileText(jsonData);
         //await c.insertJSONFromPath('columns.json', { name: 'columns' });
+
         await c.query(`CREATE TABLE test (col1 string, col2 int)`);
         await c.query(`INSERT INTO test VALUES ('Bence',2),('Anna',3) `);
         let queryData = await c.query(`SELECT * FROM test`);
-        setMyData(queryData);
 
-        //setMyData(queryData)
         await c.close();
-
         return queryData;
-    }
-
-    const formatData = (data) => {
-        headers = data;
     }
 
     const funcOrder = async () => {
         const table = await loadSite();
         setMyData(table);
-        //console.log(myData, 'ize');
-        return table;
-
+        console.log(myData, '1');
     }
 
 
-
+    //ez a function fut le, ha betoltott az oldal
     useEffect(() => {
-        //fetch('rows.json').then(response => {
-        //response.json().then(data => {
-        //loadSite(data);
-        //})
-        //})
-        funcOrder().then(data => (data = probaertek))
-        console.log(1);
-        console.log(myData, 3);
-        console.log(2);
+        funcOrder()
+        console.log(myData, 2);
 
-        //let tempData = loadSite();
-
-        //setMyData(tempData);
-        //console.log(tempData, 'hello');
-        //let rows = tempData.toArray().map(Object.fromEntries);
-        //console.log(rows, 'uzenet')
     }, [])
 
+    //setMyData is asznc function a useState-bol adodoan, ezert irtam ezt a useEffectet, ami elvileg akkor kellene lefusson,
+    //mikor a myData frissul. De ez a function egyszer sem kerul meghivasra.
     useEffect(() => {
         probaertek = myData.schema.field.map((d) => d.name);
         console.log(probaertek, 'hello');
     }, [myData])
-
-
-    //console.log(queryData, 'bencus')
-
-
-    //const formatData = async (data) => {
-    // await console.log(data, 'hello');
-    //await setHeaders(data.schema.fields.map((d) => d.name));
-    //await console.log(headers[0]);
-    //}
-    //myData.value = data.schema.fields.map((d) => d.value);
-    //const proba = data.map((d) => get(d));
-
-
-
-    //setRows(rows);
-    //rows.columns = myData.schema.fields.map((d) => d.name);
-    //console.log(rows);
-
-    //console.log()
-    //console.log(rows.length, 'hello');
-    //console.log(data.get(0).toJSON());
 
     return (
         <div>
