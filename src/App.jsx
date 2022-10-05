@@ -7,7 +7,7 @@ import * as arrow from 'apache-arrow';
 
 
 function App() {
-    const [myData, setMyData] = useState(null);
+    const [myData, setMyData] = useState([]);
     //ideiglenes default value
     const [queryString, setQueryString] = useState("SELECT * FROM test");
     let probaertek;
@@ -46,8 +46,12 @@ function App() {
 
     const funcOrder = async () => {
         const table = await loadSite();
-        setMyData(table);
-        console.log(myData, '1');
+        probaertek = table;
+        await setMyData(table.toArray());
+        await console.log(myData, '1');
+    }
+
+    const formatData = () => {
     }
 
 
@@ -58,11 +62,14 @@ function App() {
 
     }, [])
 
+    if (myData != null) {
+        formatData();
+    }
+
     //setMyData is asznc function a useState-bol adodoan, ezert irtam ezt a useEffectet, ami elvileg akkor kellene lefusson,
     //mikor a myData frissul. De ez a function egyszer sem kerul meghivasra.
     useEffect(() => {
-        probaertek = myData.schema.field.map((d) => d.name);
-        console.log(probaertek, 'hello');
+
     }, [myData])
 
     return (
@@ -76,14 +83,14 @@ function App() {
             >
             </textarea>
             <br />
-            <button onClick={() => loadSite(queryString)}>RUN</button>
+            <button onClick={() => console.log(myData)}>RUN</button>
             <button>RESET</button>
 
             <table>
                 <tbody>
                     <tr>
                         <td>hello</td>
-                        <td>{myData != null ? probaertek : 'loading...'}</td>
+                        <>{myData != null ? myData : 'loading...'}</>
                     </tr>
                 </tbody>
             </table>
