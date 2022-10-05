@@ -11,7 +11,7 @@ function App() {
     //ideiglenes default value
     const [queryString, setQueryString] = useState("SELECT * FROM test");
     //const [headers, setHeaders] = useState([]);
-    let headers = [];
+
 
     let probaertek;
 
@@ -41,7 +41,7 @@ function App() {
         await c.query(`CREATE TABLE test (col1 string, col2 int)`);
         await c.query(`INSERT INTO test VALUES ('Bence',2),('Anna',3) `);
         let queryData = await c.query(`SELECT * FROM test`);
-
+        setMyData(queryData);
 
         //setMyData(queryData)
         await c.close();
@@ -51,13 +51,14 @@ function App() {
 
     const formatData = (data) => {
         headers = data;
-        console.log(headers, 'msg')
     }
 
     const funcOrder = async () => {
         const table = await loadSite();
-        console.log(myData);
+        setMyData(table);
+        //console.log(myData, 'ize');
         return table;
+
     }
 
 
@@ -68,9 +69,10 @@ function App() {
         //loadSite(data);
         //})
         //})
-        const queriedData = funcOrder();
-        setMyData(queriedData);
-        console.log(headers);;
+        funcOrder().then(data => (data = probaertek))
+        console.log(1);
+        console.log(myData, 3);
+        console.log(2);
 
         //let tempData = loadSite();
 
@@ -79,6 +81,11 @@ function App() {
         //let rows = tempData.toArray().map(Object.fromEntries);
         //console.log(rows, 'uzenet')
     }, [])
+
+    useEffect(() => {
+        probaertek = myData.schema.field.map((d) => d.name);
+        console.log(probaertek, 'hello');
+    }, [myData])
 
 
     //console.log(queryData, 'bencus')
@@ -115,11 +122,12 @@ function App() {
             <br />
             <button onClick={() => loadSite(queryString)}>RUN</button>
             <button>RESET</button>
-            {headers == [] ? <></> : <p>{headers}</p>}
+
             <table>
                 <tbody>
                     <tr>
                         <td>hello</td>
+                        <td>{myData != null ? probaertek : 'loading...'}</td>
                     </tr>
                 </tbody>
             </table>
