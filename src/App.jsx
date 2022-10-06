@@ -3,14 +3,21 @@ import React, { useEffect, useState } from "react";
 import * as duckdb from '@duckdb/duckdb-wasm';
 import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm';
+import { v4 as uuidv4 } from 'uuid';
+import './rows.json';
 import * as arrow from 'apache-arrow';
 
 
 function App() {
     const [myData, setMyData] = useState([]);
+    const [rows, setRows] = useState([]);
+    const [cells, setCells] = useState([]);
+    const [errorMsg, setErrorMsg] = useState();
+    const [isDbInitialized, setIsDbInitialized] = useState(false);
+    const [connection, setConnection] = useState();
     //ideiglenes default value
-    const [queryString, setQueryString] = useState("SELECT * FROM test");
-    let probaertek;
+    const [queryString, setQueryString] = useState("select * from test");
+    const [canRenderData, setCanRenderData] = useState(false);
 
 
     const MANUAL_BUNDLES = {
@@ -33,68 +40,75 @@ function App() {
 
         const c = await db.connect();
 
-        //await db.registerFileText(jsonData);
-        //await c.insertJSONFromPath('columns.json', { name: 'columns' });
+        //await c.query(`CREATE TABLE test (col1 string, col2 int)`);
+        //await c.query(`INSERT INTO test VALUES ('Bence',2),('Anna',3),('John',4) `);
+        await c.insertJSONFromPath('rows.json', { name: 'rows' });
 
-        await c.query(`CREATE TABLE test (col1 string, col2 int)`);
-        await c.query(`INSERT INTO test VALUES ('Bence',2),('Anna',3) `);
-        let queryData = await c.query(`SELECT * FROM test`);
 
-        await c.close();
-        return queryData;
+        setConnection(c);
+
+        setIsDbInitialized(true);
     }
 
-    const funcOrder = async () => {
-        const table = await loadSite();
-        probaertek = table;
-        await setMyData(table.toArray());
-        await console.log(myData, '1');
+    const runQuery = async () => {
+        try {
+            let queryData = await connection.query(queryString);
+            console.log(queryData);
+
+            setMyData(queryData);
+            setRows(queryData.schema.fields.map((d) => d.name));
+            setCells(queryData.toArray().map(Object.fromEntries));
+
+            //await connection.close();
+            //formatData();
+            setCanRenderData(true);
+        } catch (error) {
+            setErrorMsg(error);
+        }
     }
-
-    const formatData = () => {
-    }
-
-
     //ez a function fut le, ha betoltott az oldal
     useEffect(() => {
-        funcOrder()
-        console.log(myData, 2);
-
+        loadSite();
     }, [])
 
-    if (myData != null) {
-        formatData();
-    }
-
-    //setMyData is asznc function a useState-bol adodoan, ezert irtam ezt a useEffectet, ami elvileg akkor kellene lefusson,
-    //mikor a myData frissul. De ez a function egyszer sem kerul meghivasra.
-    useEffect(() => {
-
-    }, [myData])
-
     return (
-        <div>
-            <textarea
-                name="queryString"
-                id="" cols="60"
-                rows="5"
-                value={queryString}
-                onChange={e => setQueryString(e.target.value)}
-            >
-            </textarea>
-            <br />
-            <button onClick={() => console.log(myData)}>RUN</button>
-            <button>RESET</button>
+        <>
+            {isDbInitialized ?
+                <div>
+                    <textarea
+                        name="queryString"
+                        id="" cols="60"
+                        rows="5"
+                        value={queryString}
+                        onChange={e => setQueryString(e.target.value)}
+                    >
+                    </textarea>
+                    <br />
+                    <button onClick={() => runQuery()}>RUN</button>
+                    <button>RESET</button>
 
-            <table>
-                <tbody>
-                    <tr>
-                        <td>hello</td>
-                        <>{myData != null ? myData : 'loading...'}</>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    {canRenderData &&
+                        <table>
+                            <thead>
+                                <tr>
+                                    {(rows.map((header) => { return <th key={header}>{header}</th> }))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cells.map((rowOfCells) => {
+                                    return <tr key={uuidv4()}>{Object.entries(rowOfCells).map(([k, v]) => {
+                                        return <td key={k}>{v}</td>
+                                    })}
+                                    </tr>
+                                }
+                                )}
+                            </tbody>
+                        </table>
+                    }
+                </div>
+                : <h2>Loading ...</h2>
+            }
+        </>
     )
 
 }
