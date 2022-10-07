@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "food": "pizza"
+    },
+    {
+        "id": 2,
+        "food": "burger"
+    },
+    {
+        "id": 3,
+        "food": "hotdog"
+    }
+]

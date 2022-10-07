@@ -4,17 +4,21 @@ import * as duckdb from '@duckdb/duckdb-wasm';
 import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm';
 import { v4 as uuidv4 } from 'uuid';
-import './rows.json';
+import jsonTable1 from './testData.json';
+import jsonTable2 from './testData2.json';
 import * as arrow from 'apache-arrow';
 
 
 function App() {
-    const [myData, setMyData] = useState([]);
+    const jsonNames = [jsonTable1, jsonTable2];
+    const tableNames = ["test1", "test2"];
+    const [resetInProgress, setResetInProgress] = useState(false);
     const [rows, setRows] = useState([]);
     const [cells, setCells] = useState([]);
     const [errorMsg, setErrorMsg] = useState();
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [connection, setConnection] = useState();
+    const [resetMsg, setResetMsg] = useState("");
     //ideiglenes default value
     const [queryString, setQueryString] = useState("select * from test");
     const [canRenderData, setCanRenderData] = useState(false);
@@ -31,7 +35,7 @@ function App() {
         },
     };
 
-    const loadSite = async () => {
+    const initDatabase = async () => {
         const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
         const worker = new Worker(bundle.mainWorker);
         const logger = new duckdb.ConsoleLogger();
@@ -39,36 +43,56 @@ function App() {
         await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
         const c = await db.connect();
+        console.log("I've been called.");
 
-        //await c.query(`CREATE TABLE test (col1 string, col2 int)`);
-        //await c.query(`INSERT INTO test VALUES ('Bence',2),('Anna',3),('John',4) `);
-        await c.insertJSONFromPath('rows.json', { name: 'rows' });
+        for (let i = 0; i < tableNames.length; i++) {
+            await c.insertJSONFromPath(jsonNames[i], { name: tableNames[i] });
+        }
 
+        //await c.insertJSONFromPath(jsonTable2, { name: tableName2 });
 
+        setResetInProgress(false);
         setConnection(c);
-
         setIsDbInitialized(true);
+
     }
 
     const runQuery = async () => {
         try {
+            setResetMsg("");
             let queryData = await connection.query(queryString);
             console.log(queryData);
 
-            setMyData(queryData);
             setRows(queryData.schema.fields.map((d) => d.name));
             setCells(queryData.toArray().map(Object.fromEntries));
 
-            //await connection.close();
-            //formatData();
             setCanRenderData(true);
         } catch (error) {
+            console.log(error);
             setErrorMsg(error);
         }
     }
-    //ez a function fut le, ha betoltott az oldal
+
+    const resetTables = async () => {
+        try {
+
+            //let resetQueryString = ("DROP TABLE main");
+            //await connection.query(resetQueryString);
+            setResetInProgress(true);
+            await connection.close();
+            setResetMsg("Reset successful.");
+            setRows([]);
+            setCells([]);
+            initDatabase();
+        } catch (error) {
+
+        }
+
+
+    }
+
     useEffect(() => {
-        loadSite();
+        initDatabase();
     }, [])
 
     return (
@@ -84,9 +108,13 @@ function App() {
                     >
                     </textarea>
                     <br />
-                    <button onClick={() => runQuery()}>RUN</button>
-                    <button>RESET</button>
-
+                    <button
+                        onClick={() => runQuery()}
+                        disabled={resetInProgress}
+                    >RUN</button>
+                    <button onClick={() => resetTables()}>RESET</button>
+                    {resetMsg && <p>{resetMsg}</p>}
+                    {errorMsg && <p>{errorMsg.Error}</p>}
                     {canRenderData &&
                         <table>
                             <thead>

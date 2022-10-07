@@ -1,15 +1,18 @@
 [
     {
+        "id": 1,
         "name": "Ben",
         "age": 23,
         "city": "Budapest"
     },
     {
+        "id": 2,
         "name": "Anna",
         "age": 22,
         "city": "Paris"
     },
     {
+        "id": 3,
         "name": "John",
         "age": 19,
         "city": "London"
