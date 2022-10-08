@@ -29,8 +29,12 @@
     "@duckdb/duckdb-wasm": "^1.16.1",
     "@types/node": "^18.8.0",
     "apache-arrow": "^9.0.0",
+    "bootstrap": "^5.2.2",
+    "css-loader": "^6.7.1",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",
+    "style-loader": "^3.3.1",
     "uuid": "^9.0.0"
   }
 }

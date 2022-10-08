@@ -1,0 +1,170 @@
+[
+    {
+        "oktato_id": "1",
+        "nev": "Kovács László",
+        "titulus": "N'Dr.",
+        "beoszt": "6",
+        "s": "2"
+    },
+    {
+        "oktato_id": "2",
+        "nev": "Szentágotai Istvás",
+        "titulus": "N'Dr.",
+        "beoszt": "3",
+        "s": "2"
+    },
+    {
+        "oktato_id": "3",
+        "nev": "Szerb László",
+        "titulus": "NULL",
+        "beoszt": "4",
+        "s": "1"
+    },
+    {
+        "oktato_id": "4",
+        "nev": "Ujfalussi István",
+        "titulus": "N'Prof, tanszékvezető",
+        "beoszt": "6",
+        "s": "2"
+    },
+    {
+        "oktato_id": "5",
+        "nev": "Balkán András",
+        "titulus": "N'Dr.",
+        "beoszt": "4",
+        "s": "2"
+    },
+    {
+        "oktato_id": "6",
+        "nev": "Szép llonka",
+        "titulus": "N'Dr.",
+        "beoszt": "3",
+        "s": "1"
+    },
+    {
+        "oktato_id": "7",
+        "nev": "Kiss János",
+        "titulus": "NULL",
+        "beoszt": "2",
+        "s": "1"
+    },
+    {
+        "oktato_id": "8",
+        "nev": "Pelikán József",
+        "titulus": "NULL",
+        "beoszt": "2",
+        "s": "3"
+    },
+    {
+        "oktato_id": "9",
+        "nev": "Farkasos Piroska",
+        "titulus": "NULL",
+        "beoszt": "2",
+        "s": "3"
+    },
+    {
+        "oktato_id": "10",
+        "nev": "Jogrerős Pál",
+        "titulus": "N'Prof.",
+        "beoszt": "6",
+        "s": "1"
+    },
+    {
+        "oktato_id": "11",
+        "nev": "Józsa Gábor",
+        "titulus": "N'Dr.",
+        "beoszt": "4",
+        "s": "1"
+    },
+    {
+        "oktato_id": "12",
+        "nev": "Varga Kata",
+        "titulus": "N'Dr.",
+        "beoszt": "4",
+        "s": "1"
+    },
+    {
+        "oktato_id": "14",
+        "nev": "Szénási ászló",
+        "titulus": "NULL",
+        "beoszt": "3",
+        "s": "1"
+    },
+    {
+        "oktato_id": "18",
+        "nev": "Nógrádi Kata",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "19",
+        "nev": "Rácz András",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "20",
+        "nev": "Kovács András",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "104",
+        "nev": "Ludas Mátyás",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "105",
+        "nev": "Kiss István",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "2"
+    },
+    {
+        "oktato_id": "107",
+        "nev": "Mészáros Kriszta",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "2"
+    },
+    {
+        "oktato_id": "108",
+        "nev": "Róbert Gida",
+        "titulus": "NULL",
+        "beoszt": "2",
+        "s": "1"
+    },
+    {
+        "oktato_id": "111",
+        "nev": "Vitéz János",
+        "titulus": "NULL",
+        "beoszt": "2",
+        "s": "1"
+    },
+    {
+        "oktato_id": "200",
+        "nev": "Aranyi Mária",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "300",
+        "nev": "Szabó Andrera",
+        "titulus": "NULL",
+        "beoszt": "1",
+        "s": "1"
+    },
+    {
+        "oktato_id": "301",
+        "nev": "Juhász András",
+        "titulus": "N'Dr.",
+        "beoszt": "6",
+        "s": "1"
+    }
+]

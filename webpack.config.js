@@ -24,6 +24,30 @@ module.exports = {
                     filename: 'static/json/[name].[contenthash][ext]',
                 },
             },
+            {
+                test: /\.(csv|tbl)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/csv/[name].[contenthash][ext]',
+                },
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    {
+                        loader: "css-loader",
+                        options: {
+                            modules: {
+                                mode: "local",
+                                auto: true,
+                                exportGlobals: true,
+                                localIdentContext: path.resolve(__dirname, "src"),
+                            },
+                        },
+                    },
+                ]
+            },
         ]
     },
     experiments: {

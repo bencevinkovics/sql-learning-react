@@ -4,14 +4,18 @@ import * as duckdb from '@duckdb/duckdb-wasm';
 import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm';
 import { v4 as uuidv4 } from 'uuid';
+import Button from 'react-bootstrap/Button';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./app.css";
 import jsonTable1 from './testData.json';
 import jsonTable2 from './testData2.json';
+import jsonTable3 from './tanarok.json';
 import * as arrow from 'apache-arrow';
 
 
 function App() {
-    const jsonNames = [jsonTable1, jsonTable2];
-    const tableNames = ["test1", "test2"];
+    const jsonNames = [jsonTable1, jsonTable2, jsonTable3];
+    const jsonTableNames = ["test1", "test2", "tanarok"];
     const [resetInProgress, setResetInProgress] = useState(false);
     const [rows, setRows] = useState([]);
     const [cells, setCells] = useState([]);
@@ -20,7 +24,7 @@ function App() {
     const [connection, setConnection] = useState();
     const [resetMsg, setResetMsg] = useState("");
     //ideiglenes default value
-    const [queryString, setQueryString] = useState("select * from test");
+    const [queryString, setQueryString] = useState("select * from test1");
     const [canRenderData, setCanRenderData] = useState(false);
 
 
@@ -45,11 +49,11 @@ function App() {
         const c = await db.connect();
         console.log("I've been called.");
 
-        for (let i = 0; i < tableNames.length; i++) {
-            await c.insertJSONFromPath(jsonNames[i], { name: tableNames[i] });
+
+        for (let i = 0; i < jsonTableNames.length; i++) {
+            await c.insertJSONFromPath(jsonNames[i], { name: jsonTableNames[i] });
         }
 
-        //await c.insertJSONFromPath(jsonTable2, { name: tableName2 });
 
         setResetInProgress(false);
         setConnection(c);
@@ -59,7 +63,9 @@ function App() {
 
     const runQuery = async () => {
         try {
+            setCanRenderData(false);
             setResetMsg("");
+            setErrorMsg("");
             let queryData = await connection.query(queryString);
             console.log(queryData);
 
@@ -69,18 +75,16 @@ function App() {
             setCanRenderData(true);
         } catch (error) {
             console.log(error);
-            setErrorMsg(error);
+            setErrorMsg("Hiba történt 😔");
         }
     }
 
     const resetTables = async () => {
         try {
-
-            //let resetQueryString = ("DROP TABLE main");
-            //await connection.query(resetQueryString);
+            setErrorMsg("");
             setResetInProgress(true);
             await connection.close();
-            setResetMsg("Reset successful.");
+            setResetMsg("Reset successful ✅");
             setRows([]);
             setCells([]);
             initDatabase();
@@ -99,22 +103,27 @@ function App() {
         <>
             {isDbInitialized ?
                 <div>
-                    <textarea
-                        name="queryString"
-                        id="" cols="60"
-                        rows="5"
-                        value={queryString}
-                        onChange={e => setQueryString(e.target.value)}
-                    >
-                    </textarea>
-                    <br />
-                    <button
-                        onClick={() => runQuery()}
-                        disabled={resetInProgress}
-                    >RUN</button>
-                    <button onClick={() => resetTables()}>RESET</button>
-                    {resetMsg && <p>{resetMsg}</p>}
-                    {errorMsg && <p>{errorMsg.Error}</p>}
+                    <div className="controlContainer">
+                        <textarea
+                            name="queryString"
+                            id="" cols="60"
+                            rows="6"
+                            value={queryString}
+                            onChange={e => setQueryString(e.target.value)}
+                        >
+                        </textarea>
+                        <br />
+                        <div className="buttonContainer">
+                            <Button
+                                onClick={() => runQuery()}
+                                disabled={resetInProgress}
+                                variant="primary"
+                            >RUN ▶️</Button>
+                            <Button onClick={() => resetTables()} variant="primary">RESET ❌</Button>
+                        </div>
+                    </div>
+                    {resetMsg && <p className="sysMessageSuccess">{resetMsg}</p>}
+                    {errorMsg && <p className="sysMessageError">{errorMsg}</p>}
                     {canRenderData &&
                         <table>
                             <thead>
