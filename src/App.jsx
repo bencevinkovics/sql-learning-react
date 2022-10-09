@@ -10,7 +10,6 @@ import "./app.css";
 import jsonTable1 from './testData.json';
 import jsonTable2 from './testData2.json';
 import jsonTable3 from './tanarok.json';
-import * as arrow from 'apache-arrow';
 
 
 function App() {
@@ -23,8 +22,7 @@ function App() {
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [connection, setConnection] = useState();
     const [resetMsg, setResetMsg] = useState("");
-    //ideiglenes default value
-    const [queryString, setQueryString] = useState("select * from test1");
+    const [queryString, setQueryString] = useState("");
     const [canRenderData, setCanRenderData] = useState(false);
 
 
@@ -47,35 +45,36 @@ function App() {
         await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
         const c = await db.connect();
-        console.log("I've been called.");
-
 
         for (let i = 0; i < jsonTableNames.length; i++) {
             await c.insertJSONFromPath(jsonNames[i], { name: jsonTableNames[i] });
         }
 
-
         setResetInProgress(false);
         setConnection(c);
         setIsDbInitialized(true);
-
     }
 
     const runQuery = async () => {
         try {
-            setCanRenderData(false);
-            setResetMsg("");
-            setErrorMsg("");
-            let queryData = await connection.query(queryString);
-            console.log(queryData);
 
-            setRows(queryData.schema.fields.map((d) => d.name));
-            setCells(queryData.toArray().map(Object.fromEntries));
+            if (queryString == "") {
+                setErrorMsg(["Nincs megadva SQL lekérdezés."]);
+            }
+            else {
+                setCanRenderData(false);
+                setResetMsg("");
+                setErrorMsg("");
+                let queryData = await connection.query(queryString);
+                console.log(queryData);
 
-            setCanRenderData(true);
+                setRows(queryData.schema.fields.map((d) => d.name));
+                setCells(queryData.toArray().map(Object.fromEntries));
+
+                setCanRenderData(true);
+            }
         } catch (error) {
             console.log(error);
-            //setErrorMsg("An error occured 😔");
             setErrorMsg(["Hiba történt 😔", error.message.slice(15, -1)]);
         }
     }
@@ -85,15 +84,14 @@ function App() {
             setErrorMsg("");
             setResetInProgress(true);
             await connection.close();
-            setResetMsg("Reset successful ✅");
+            setResetMsg("Visszaállítás sikerült ✅");
             setRows([]);
             setCells([]);
             initDatabase();
         } catch (error) {
-
+            console.log(error);
+            setErrorMsg(["Hiba történt 😔", error.message.slice(15, -1)]);
         }
-
-
     }
 
     useEffect(() => {
@@ -104,7 +102,7 @@ function App() {
         <>
             {isDbInitialized ?
                 <div>
-                    <div className="controlContainer">
+                    <form className="controlContainer">
                         <textarea
                             name="queryString"
                             id="" cols="60"
@@ -120,11 +118,12 @@ function App() {
                                 disabled={resetInProgress}
                                 variant="primary"
                             >RUN ▶️</Button>
-                            <Button onClick={() => resetTables()} variant="primary">RESET ❌</Button>
+                            <Button
+                                onClick={() => resetTables()} variant="primary">RESET ❌</Button>
                         </div>
-                    </div>
+                    </form>
                     {resetMsg && <p className="sysMessageSuccess">{resetMsg}</p>}
-                    {errorMsg && errorMsg.map((msg) => { return <p className="sysMessageError">{msg}</p> })}
+                    {errorMsg && errorMsg.map((msg) => { return <p key={uuidv4()} className="sysMessageError">{msg}</p> })}
                     {canRenderData &&
                         <table>
                             <thead>
@@ -144,7 +143,7 @@ function App() {
                         </table>
                     }
                 </div>
-                : <h2>Loading ...</h2>
+                : <h2 className="loading">Loading ...</h2>
             }
         </>
     )

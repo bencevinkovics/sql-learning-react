@@ -5,6 +5,11 @@ body {
     background-color: #0d1117;
 }
 
+.loading {
+    padding: 2vh 2vh 2vh 2vh;
+    color: #F9F6EE;
+}
+
 table,
 td,
 th {
