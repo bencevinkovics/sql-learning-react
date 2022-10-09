@@ -75,7 +75,8 @@ function App() {
             setCanRenderData(true);
         } catch (error) {
             console.log(error);
-            setErrorMsg("Hiba történt 😔");
+            //setErrorMsg("An error occured 😔");
+            setErrorMsg(["Hiba történt 😔", error.message.slice(15, -1)]);
         }
     }
 
@@ -123,7 +124,7 @@ function App() {
                         </div>
                     </div>
                     {resetMsg && <p className="sysMessageSuccess">{resetMsg}</p>}
-                    {errorMsg && <p className="sysMessageError">{errorMsg}</p>}
+                    {errorMsg && errorMsg.map((msg) => { return <p className="sysMessageError">{msg}</p> })}
                     {canRenderData &&
                         <table>
                             <thead>

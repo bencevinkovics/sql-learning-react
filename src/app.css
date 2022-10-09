@@ -17,7 +17,7 @@ th {
 }
 
 table {
-    margin: 2vh 0 0 2vh;
+    margin: 2vh 0 2vh 2vh;
 }
 
 th {
@@ -32,7 +32,7 @@ th {
 
 .sysMessageSuccess {
     margin: 2vh 2vh 2vh 4vh;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
     color: #00AA00;
 }
@@ -40,7 +40,7 @@ th {
 
 .sysMessageError {
     margin: 2vh 2vh 2vh 4vh;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
     color: #FF5555;
 }
@@ -59,9 +59,12 @@ button:hover {
 textarea {
     border: none;
     resize: none;
-    padding-left: 0.5vh;
+    padding: 0 0 0 1vh;
     background-color: #AAAAAA;
-    ;
+}
+
+textarea:focus {
+    outline: none;
 }
 
 .controlContainer {
