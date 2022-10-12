@@ -22,7 +22,7 @@ function App() {
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [connection, setConnection] = useState();
     const [resetMsg, setResetMsg] = useState("");
-    const [queryString, setQueryString] = useState("");
+    const [queryString, setQueryString] = useState("selec * from test1");
     const [canRenderData, setCanRenderData] = useState(false);
 
 
@@ -75,7 +75,7 @@ function App() {
             }
         } catch (error) {
             console.log(error);
-            setErrorMsg(["Hiba történt 😔", error.message.slice(15, -1)]);
+            setErrorMsg(["Hiba történt 😔", error.message.slice(14, -1)]);
         }
     }
 
@@ -90,7 +90,7 @@ function App() {
             initDatabase();
         } catch (error) {
             console.log(error);
-            setErrorMsg(["Hiba történt 😔", error.message.slice(15, -1)]);
+            setErrorMsg(["Hiba történt 😔", error.message.slice(-1)]);
         }
     }
 
