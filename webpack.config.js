@@ -58,7 +58,8 @@ module.exports = {
     },
     //2
     output: {
-        path: path.resolve(__dirname, '/dist/'),
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
         webassemblyModuleFilename: "dist/wasm/[hash].wasm",
         assetModuleFilename: "dist/assets/[name].[contenthash][ext]",
