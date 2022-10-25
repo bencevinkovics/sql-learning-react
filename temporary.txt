@@ -1,0 +1,13 @@
+http://localhost:8080/Users/bence/Documents/TANULAS/Programming/githubproba/sql-learning-react-main/distdist/assets/duckdb-browser-eh.worker.c9941fcba9e390fb888d.js
+
+
+        path: path.resolve(__dirname, 'dist'),
+
+
+            {
+                test: /\.(json)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/json/[name].[contenthash][ext]',
+                },
+            },

@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     //1
@@ -14,15 +15,8 @@ module.exports = {
                 test: /.*\.wasm$/,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'dist/wasm/[name].[contenthash][ext]',
+                    filename: 'static/wasm/[name].[contenthash][ext]',
                 }
-            },
-            {
-                test: /\.(json)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'static/json/[name].[contenthash][ext]',
-                },
             },
             {
                 test: /\.(csv|tbl)$/i,
@@ -59,13 +53,20 @@ module.exports = {
     //2
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: path.resolve(__dirname, 'dist'),
+        publicPath: '/',
         filename: 'bundle.js',
-        webassemblyModuleFilename: "dist/wasm/[hash].wasm",
-        assetModuleFilename: "dist/assets/[name].[contenthash][ext]",
+        webassemblyModuleFilename: "static/wasm/[hash].wasm",
+        assetModuleFilename: "static/assets/[name].[contenthash][ext]",
     },
     //3
     devServer: {
-        static: path.resolve(__dirname, './dist'),
-    }
+        static: path.resolve(__dirname, 'dist'),
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                { from: "./src/json", to: "static/json" },
+            ],
+        }),
+    ],
 };

@@ -7,24 +7,22 @@ import { v4 as uuidv4 } from 'uuid';
 import Button from 'react-bootstrap/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
-import jsonTable1 from './testData.json';
-import jsonTable2 from './testData2.json';
-import jsonTable3 from './tanarok.json';
 
 
 function App() {
-    const jsonNames = [jsonTable1, jsonTable2, jsonTable3];
-    const jsonTableNames = ["test1", "test2", "tanarok"];
     const [resetInProgress, setResetInProgress] = useState(false);
-    const [rows, setRows] = useState([]);
-    const [cells, setCells] = useState([]);
-    const [errorMsg, setErrorMsg] = useState();
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [connection, setConnection] = useState();
     const [resetMsg, setResetMsg] = useState("");
-    const [queryString, setQueryString] = useState("selec * from test1");
+    const [dataArrived, setDataArrived] = useState(false);
     const [canRenderData, setCanRenderData] = useState(false);
-
+    const [tableName, setTableName] = useState(['rows'])
+    const [tableData, setTableData] = useState([`[{ "col1": 1, "col2": "foo" },{ "col1": 2, "col2": "bar" },]`]);
+    const [queryString, setQueryString] = useState("select * from rows");
+    const [rows, setRows] = useState([]);
+    const [cells, setCells] = useState([]);
+    const [errorMsg, setErrorMsg] = useState();
+    const trustedURL = 'http://localhost:8081'
 
     const MANUAL_BUNDLES = {
         mvp: {
@@ -37,7 +35,7 @@ function App() {
         },
     };
 
-    const initDatabase = async () => {
+    const initDatabase = async (jsonText, nameOfTable) => {
         const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
         const worker = new Worker(bundle.mainWorker);
         const logger = new duckdb.ConsoleLogger();
@@ -46,8 +44,10 @@ function App() {
 
         const c = await db.connect();
 
-        for (let i = 0; i < jsonTableNames.length; i++) {
-            await c.insertJSONFromPath(jsonNames[i], { name: jsonTableNames[i] });
+        for (let j = 0; j < jsonText.length; j++) {
+            await db.registerFileText((nameOfTable[j] + '.json'), jsonText[j]);
+
+            await c.insertJSONFromPath((nameOfTable[j] + '.json'), { name: nameOfTable[j] });
         }
 
         setResetInProgress(false);
@@ -55,17 +55,17 @@ function App() {
         setIsDbInitialized(true);
     }
 
-    const runQuery = async () => {
+    const runQuery = async (myString) => {
         try {
 
-            if (queryString == "") {
+            if (myString == "") {
                 setErrorMsg(["Nincs megadva SQL lekérdezés."]);
             }
             else {
                 setCanRenderData(false);
                 setResetMsg("");
                 setErrorMsg("");
-                let queryData = await connection.query(queryString);
+                let queryData = await connection.query(myString);
                 console.log(queryData);
 
                 setRows(queryData.schema.fields.map((d) => d.name));
@@ -87,7 +87,7 @@ function App() {
             setResetMsg("Visszaállítás sikerült ✅");
             setRows([]);
             setCells([]);
-            initDatabase();
+            initDatabase(tableData, tableName);
         } catch (error) {
             console.log(error);
             setErrorMsg(["Hiba történt 😔", error.message.slice(-1)]);
@@ -95,8 +95,29 @@ function App() {
     }
 
     useEffect(() => {
-        initDatabase();
+
+        window.addEventListener("message", ({ data, origin }) => {
+
+            if (origin == trustedURL) {
+                const jsonData = JSON.parse(data);
+                setQueryString(jsonData[0].sql)
+                for (let i = 0; i < jsonData[0].tables.length; i++) {
+                    setTableName(oldTableName => [...oldTableName, jsonData[0].tables[i].name])
+                    setTableData(oldTableData => [...oldTableData, eval("`" + JSON.stringify(jsonData[0].tables[i].tableData) + "`")])
+                }
+                setDataArrived(true);
+            }
+            else {
+                setDataArrived(true);
+            }
+        })
     }, [])
+
+    useEffect(() => {
+        if (tableData != null) {
+            initDatabase(tableData, tableName)
+        }
+    }, [dataArrived])
 
     return (
         <>
@@ -109,12 +130,13 @@ function App() {
                             rows="6"
                             value={queryString}
                             onChange={e => setQueryString(e.target.value)}
+                        //ref={queryString}
                         >
                         </textarea>
                         <br />
                         <div className="buttonContainer">
                             <Button
-                                onClick={() => runQuery()}
+                                onClick={() => runQuery(queryString)}
                                 disabled={resetInProgress}
                                 variant="primary"
                             >RUN ▶️</Button>
