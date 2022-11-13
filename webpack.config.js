@@ -1,9 +1,8 @@
 const path = require('path');
-const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     //1
-    entry: path.resolve(__dirname, './src/index.jsx'),
+    entry: path.resolve(__dirname, 'src/index.jsx'),
     module: {
         rules: [
             {
@@ -19,33 +18,10 @@ module.exports = {
                 }
             },
             {
-                test: /\.(csv|tbl)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'static/csv/[name].[contenthash][ext]',
-                },
-            },
-            {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: "css-loader",
-                        options: {
-                            modules: {
-                                mode: "local",
-                                auto: true,
-                                exportGlobals: true,
-                                localIdentContext: path.resolve(__dirname, "src"),
-                            },
-                        },
-                    },
-                ]
+                use: ['style-loader', "css-loader"]
             },
         ]
-    },
-    experiments: {
-        asyncWebAssembly: true,
     },
     resolve: {
         extensions: ['*', '.js', '.jsx', '.wasm'],
@@ -53,7 +29,7 @@ module.exports = {
     //2
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/',
+        publicPath: path.resolve(__dirname, '/'),
         filename: 'bundle.js',
         webassemblyModuleFilename: "static/wasm/[hash].wasm",
         assetModuleFilename: "static/assets/[name].[contenthash][ext]",
@@ -61,12 +37,5 @@ module.exports = {
     //3
     devServer: {
         static: path.resolve(__dirname, 'dist'),
-    },
-    plugins: [
-        new CopyPlugin({
-            patterns: [
-                { from: "./src/json", to: "static/json" },
-            ],
-        }),
-    ],
+    }
 };

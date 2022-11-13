@@ -25,6 +25,10 @@ table {
     margin: 2vh 0 2vh 2vh;
 }
 
+p {
+    color: white;
+}
+
 th {
     font-weight: bold;
 }

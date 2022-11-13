@@ -4,6 +4,7 @@ import * as duckdb from '@duckdb/duckdb-wasm';
 import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm';
 import { v4 as uuidv4 } from 'uuid';
+import moment from "moment/moment";
 import Button from 'react-bootstrap/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
@@ -62,14 +63,17 @@ function App() {
                 setErrorMsg(["Nincs megadva SQL lekérdezés."]);
             }
             else {
+                console.log(queryData);
                 setCanRenderData(false);
                 setResetMsg("");
                 setErrorMsg("");
                 let queryData = await connection.query(myString);
                 console.log(queryData);
 
+
                 setRows(queryData.schema.fields.map((d) => d.name));
                 setCells(queryData.toArray().map(Object.fromEntries));
+
 
                 setCanRenderData(true);
             }
@@ -101,6 +105,8 @@ function App() {
             if (origin == trustedURL) {
                 const jsonData = JSON.parse(data);
                 setQueryString(jsonData[0].sql)
+                setTableName([]);
+                setTableData([]);
                 for (let i = 0; i < jsonData[0].tables.length; i++) {
                     setTableName(oldTableName => [...oldTableName, jsonData[0].tables[i].name])
                     setTableData(oldTableData => [...oldTableData, eval("`" + JSON.stringify(jsonData[0].tables[i].tableData) + "`")])
@@ -114,9 +120,7 @@ function App() {
     }, [])
 
     useEffect(() => {
-        if (tableData != null) {
-            initDatabase(tableData, tableName)
-        }
+        initDatabase(tableData, tableName)
     }, [dataArrived])
 
     return (
@@ -150,13 +154,18 @@ function App() {
                         <table>
                             <thead>
                                 <tr>
-                                    {(rows.map((header) => { return <th key={header}>{header}</th> }))}
+                                    {(rows.map((header) => { return <th key={uuidv4()}>{header}</th> }))}
                                 </tr>
                             </thead>
                             <tbody>
                                 {cells.map((rowOfCells) => {
                                     return <tr key={uuidv4()}>{Object.entries(rowOfCells).map(([k, v]) => {
-                                        return <td key={k}>{v}</td>
+                                        if (Object.prototype.toString.call(v) == '[object Date]') {
+                                            return <td key={uuidv4()}>{moment(v).format('YYYY-MM-DD')}</td>
+                                        }
+                                        else {
+                                            return <td key={uuidv4()}>{v}</td>
+                                        }
                                     })}
                                     </tr>
                                 }
