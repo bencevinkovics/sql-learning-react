@@ -5,8 +5,6 @@ import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm';
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment/moment";
-import Button from 'react-bootstrap/Button';
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
 
 
@@ -126,7 +124,7 @@ function App() {
     return (
         <>
             {isDbInitialized ?
-                <div>
+                <div id="pageContainer">
                     <form className="controlContainer">
                         <textarea
                             name="queryString"
@@ -139,13 +137,17 @@ function App() {
                         </textarea>
                         <br />
                         <div className="buttonContainer">
-                            <Button
+                            <button
+                                className="button"
+                                type="button"
                                 onClick={() => runQuery(queryString)}
                                 disabled={resetInProgress}
-                                variant="primary"
-                            >RUN ▶️</Button>
-                            <Button
-                                onClick={() => resetTables()} variant="primary">RESET ❌</Button>
+                            >RUN ▶️</button>
+                            <button
+                                className="button"
+                                type="button"
+                                onClick={() => resetTables()}
+                            >RESET ❌</button>
                         </div>
                     </form>
                     {resetMsg && <p className="sysMessageSuccess">{resetMsg}</p>}

@@ -10,6 +10,46 @@ body {
     color: #F9F6EE;
 }
 
+#pageContainer {
+    width: 60%;
+}
+
+.button {
+    margin: 0.5vh 0.5vh 1vh 0.5vh;
+    background-color: #0d1117;
+    color: #58a6ff;
+    border: 2px solid #58a6ff;
+    border-radius: 10px;
+    padding: 5px 10px 5px 10px;
+    font-size: 1.025em;
+}
+
+.button:hover {
+    background-color: #434343;
+    border: 2px solid #58a6ff;
+}
+
+@media screen and (max-width: 500px) {
+    #pageContainer {
+        width: 95%;
+    }
+
+    .button {
+        margin: 0.5vh 0.5vh 1vh 0.5vh;
+        background-color: #0d1117;
+        color: #58a6ff;
+        border: 2px solid #58a6ff;
+        border-radius: 10px;
+        padding: 5px 10px 5px 10px;
+        font-size: 1.025em;
+        white-space: nowrap;
+    }
+}
+
+.controlContainer {
+    width: 100%;
+}
+
 table,
 td,
 th {
@@ -54,22 +94,14 @@ th {
     color: #FF5555;
 }
 
-button {
-    margin: 0.5vh 0.5vh 1vh 0.5vh;
-    background-color: #0d1117 !important;
-    color: #58a6ff !important;
-}
-
-button:hover {
-    background-color: #555555 !important;
-}
-
 
 textarea {
     border: none;
     resize: none;
-    padding: 0 0 0 1vh;
+    margin-left: 1%;
     background-color: #AAAAAA;
+    font-size: 1.2em;
+    width: 98%;
 }
 
 textarea:focus {
