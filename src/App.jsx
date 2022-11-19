@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm';
@@ -17,7 +17,7 @@ function App() {
     const [canRenderData, setCanRenderData] = useState(false);
     const [tableName, setTableName] = useState(['rows'])
     const [tableData, setTableData] = useState([`[{ "col1": 1, "col2": "foo" },{ "col1": 2, "col2": "bar" },]`]);
-    const [queryString, setQueryString] = useState("select * from rows");
+    const queryString = useRef("select * from rows");
     const [rows, setRows] = useState([]);
     const [cells, setCells] = useState([]);
     const [errorMsg, setErrorMsg] = useState();
@@ -68,7 +68,6 @@ function App() {
                 let queryData = await connection.query(myString);
                 console.log(queryData);
 
-
                 setRows(queryData.schema.fields.map((d) => d.name));
                 setCells(queryData.toArray().map(Object.fromEntries));
 
@@ -102,7 +101,7 @@ function App() {
 
             if (origin == trustedURL) {
                 const jsonData = JSON.parse(data);
-                setQueryString(jsonData[0].sql)
+                queryString.current = jsonData[0].sql;
                 setTableName([]);
                 setTableData([]);
                 for (let i = 0; i < jsonData[0].tables.length; i++) {
@@ -130,9 +129,8 @@ function App() {
                             name="queryString"
                             id="" cols="60"
                             rows="6"
-                            value={queryString}
-                            onChange={e => setQueryString(e.target.value)}
-                        //ref={queryString}
+                            defaultValue={queryString.current}
+                            ref={queryString}
                         >
                         </textarea>
                         <br />
@@ -140,7 +138,7 @@ function App() {
                             <button
                                 className="button"
                                 type="button"
-                                onClick={() => runQuery(queryString)}
+                                onClick={() => runQuery(queryString.current.value)}
                                 disabled={resetInProgress}
                             >RUN ▶️</button>
                             <button
@@ -153,27 +151,31 @@ function App() {
                     {resetMsg && <p className="sysMessageSuccess">{resetMsg}</p>}
                     {errorMsg && errorMsg.map((msg) => { return <p key={uuidv4()} className="sysMessageError">{msg}</p> })}
                     {canRenderData &&
-                        <table>
-                            <thead>
-                                <tr>
-                                    {(rows.map((header) => { return <th key={uuidv4()}>{header}</th> }))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {cells.map((rowOfCells) => {
-                                    return <tr key={uuidv4()}>{Object.entries(rowOfCells).map(([k, v]) => {
-                                        if (Object.prototype.toString.call(v) == '[object Date]') {
-                                            return <td key={uuidv4()}>{moment(v).format('YYYY-MM-DD')}</td>
+                        <div className="tableAligner">
+                            <div id="tableContainer">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            {(rows.map((header) => { return <th key={uuidv4()}>{header}</th> }))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {cells.map((rowOfCells) => {
+                                            return <tr key={uuidv4()}>{Object.entries(rowOfCells).map(([k, v]) => {
+                                                if (Object.prototype.toString.call(v) == '[object Date]') {
+                                                    return <td key={uuidv4()}>{moment(v).format('YYYY-MM-DD')}</td>
+                                                }
+                                                else {
+                                                    return <td key={uuidv4()}>{v}</td>
+                                                }
+                                            })}
+                                            </tr>
                                         }
-                                        else {
-                                            return <td key={uuidv4()}>{v}</td>
-                                        }
-                                    })}
-                                    </tr>
-                                }
-                                )}
-                            </tbody>
-                        </table>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     }
                 </div>
                 : <h2 className="loading">Loading ...</h2>
