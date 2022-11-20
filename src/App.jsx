@@ -42,6 +42,7 @@ function App() {
         await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
         const c = await db.connect();
+        console.log("megtortent");
 
         for (let j = 0; j < jsonText.length; j++) {
             await db.registerFileText((nameOfTable[j] + '.json'), jsonText[j]);
@@ -61,7 +62,6 @@ function App() {
                 setErrorMsg(["Nincs megadva SQL lekérdezés."]);
             }
             else {
-                console.log(queryData);
                 setCanRenderData(false);
                 setResetMsg("");
                 setErrorMsg("");
@@ -97,8 +97,27 @@ function App() {
 
     useEffect(() => {
 
-        window.addEventListener("message", ({ data, origin }) => {
+        function waitForMessage() {
+            return new Promise((resolve, reject) => {
+                const handler = (e) => {
+                    try {
+                        console.log(e);
+                        resolve([e.origin, e.data]);
+                    } catch (error) {
+                        reject(error + 'failed');
+                    }
+                    window.removeEventListener('message', handler)
+                }
 
+                window.addEventListener('message', handler);
+            });
+        }
+
+        async function waitForData() {
+            const response = await waitForMessage();
+            const origin = response[0];
+            const data = response[1];
+            console.log(data);
             if (origin == trustedURL) {
                 const jsonData = JSON.parse(data);
                 queryString.current = jsonData[0].sql;
@@ -113,7 +132,8 @@ function App() {
             else {
                 setDataArrived(true);
             }
-        })
+        }
+        waitForData();
     }, [])
 
     useEffect(() => {
