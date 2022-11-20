@@ -98,16 +98,15 @@ function App() {
 
         function waitForMessage() {
             return new Promise((resolve, reject) => {
-                const handler = (e) => {
+                const resultReturner = (e) => {
                     try {
                         resolve([e.origin, e.data]);
                     } catch (error) {
                         reject(error + 'failed');
                     }
-                    window.removeEventListener('message', handler)
                 }
 
-                window.addEventListener('message', handler);
+                window.addEventListener('message', resultReturner);
             });
         }
 
