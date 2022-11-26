@@ -21,7 +21,6 @@ function App() {
     const [rows, setRows] = useState([]);
     const [cells, setCells] = useState([]);
     const [errorMsg, setErrorMsg] = useState();
-    const trustedURL = 'http://localhost:8081';
 
     const MANUAL_BUNDLES = {
         mvp: {
@@ -52,7 +51,6 @@ function App() {
 
         async function waitForData() {
             const response = await waitForMessage();
-            const origin = response[0];
             const data = response[1];
             if (data.data != null) {
                 const jsonData = JSON.parse(data);
