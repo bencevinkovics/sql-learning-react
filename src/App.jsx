@@ -17,11 +17,11 @@ function App() {
     const [canRenderData, setCanRenderData] = useState(false);
     const [tableName, setTableName] = useState(['rows'])
     const [tableData, setTableData] = useState([`[{ "col1": 1, "col2": "foo" },{ "col1": 2, "col2": "bar" },]`]);
-    const queryString = useRef("select * from rows");
+    const queryString = useRef("SELECT * FROM rows");
     const [rows, setRows] = useState([]);
     const [cells, setCells] = useState([]);
     const [errorMsg, setErrorMsg] = useState();
-    const trustedURL = 'http://localhost:8081'
+    const trustedURL = 'http://localhost:8081';
 
     const MANUAL_BUNDLES = {
         mvp: {
@@ -33,6 +33,48 @@ function App() {
             mainWorker: new URL('@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js', import.meta.url).toString(),
         },
     };
+
+    useEffect(() => {
+
+        function waitForMessage() {
+            return new Promise((resolve, reject) => {
+                const resultReturner = (e) => {
+                    try {
+                        resolve([e.origin, e.data]);
+                    } catch (error) {
+                        reject(error + 'failed');
+                    }
+                }
+
+                window.addEventListener('message', resultReturner);
+            });
+        }
+
+        async function waitForData() {
+            const response = await waitForMessage();
+            const origin = response[0];
+            const data = response[1];
+            if (data.data != null) {
+                const jsonData = JSON.parse(data);
+                queryString.current = jsonData[0].sql;
+                setTableName([]);
+                setTableData([]);
+                for (let i = 0; i < jsonData[0].tables.length; i++) {
+                    setTableName(oldTableName => [...oldTableName, jsonData[0].tables[i].name])
+                    setTableData(oldTableData => [...oldTableData, eval("`" + JSON.stringify(jsonData[0].tables[i].tableData) + "`")])
+                }
+                setDataArrived(true);
+            }
+            else {
+                setDataArrived(true);
+            }
+        }
+        waitForData();
+    }, [])
+
+    useEffect(() => {
+        initDatabase(tableData, tableName)
+    }, [dataArrived])
 
     const initDatabase = async (jsonText, nameOfTable) => {
         const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
@@ -94,48 +136,6 @@ function App() {
         }
     }
 
-    useEffect(() => {
-
-        function waitForMessage() {
-            return new Promise((resolve, reject) => {
-                const resultReturner = (e) => {
-                    try {
-                        resolve([e.origin, e.data]);
-                    } catch (error) {
-                        reject(error + 'failed');
-                    }
-                }
-
-                window.addEventListener('message', resultReturner);
-            });
-        }
-
-        async function waitForData() {
-            const response = await waitForMessage();
-            const origin = response[0];
-            const data = response[1];
-            if (origin == trustedURL) {
-                const jsonData = JSON.parse(data);
-                queryString.current = jsonData[0].sql;
-                setTableName([]);
-                setTableData([]);
-                for (let i = 0; i < jsonData[0].tables.length; i++) {
-                    setTableName(oldTableName => [...oldTableName, jsonData[0].tables[i].name])
-                    setTableData(oldTableData => [...oldTableData, eval("`" + JSON.stringify(jsonData[0].tables[i].tableData) + "`")])
-                }
-                setDataArrived(true);
-            }
-            else {
-                setDataArrived(true);
-            }
-        }
-        waitForData();
-    }, [])
-
-    useEffect(() => {
-        initDatabase(tableData, tableName)
-    }, [dataArrived])
-
     return (
         <>
             {isDbInitialized ?
@@ -177,14 +177,17 @@ function App() {
                                     </thead>
                                     <tbody>
                                         {cells.map((rowOfCells) => {
-                                            return <tr key={uuidv4()}>{Object.entries(rowOfCells).map(([k, v]) => {
-                                                if (Object.prototype.toString.call(v) == '[object Date]') {
-                                                    return <td key={uuidv4()}>{moment(v).format('YYYY-MM-DD')}</td>
-                                                }
-                                                else {
-                                                    return <td key={uuidv4()}>{v}</td>
-                                                }
-                                            })}
+                                            return <tr key={uuidv4()}>
+                                                {Object.entries(rowOfCells).map(([k, v]) => {
+                                                    if (Object.prototype.toString.call(v) == '[object Date]') {
+                                                        return <td key={uuidv4()}>
+                                                            {moment(v).format('YYYY-MM-DD')}
+                                                        </td>
+                                                    }
+                                                    else {
+                                                        return <td key={uuidv4()}>{v}</td>
+                                                    }
+                                                })}
                                             </tr>
                                         }
                                         )}

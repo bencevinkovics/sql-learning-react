@@ -36,27 +36,6 @@ body {
     width: 100%;
 }
 
-/*@media screen and (max-width: 900px) {
-    .button {
-        margin: 0.5vh 0.5vh 1vh 0.5vh;
-        background-color: #0d1117;
-        color: #58a6ff;
-        border: 2px solid #58a6ff;
-        border-radius: 10px;
-        padding: 5px 10px 5px 10px;
-        font-size: 1.025em;
-        white-space: nowrap;
-    }
-
-    .controlContainer {
-        width: 70%;
-    }
-
-    .tableAligner {
-        width: 70%;
-    }
-}*/
-
 @media screen and (max-width: 700px) {
     .button {
         margin: 0.5vh 0.5vh 1vh 0.5vh;
@@ -132,7 +111,7 @@ th {
 
 
 .sysMessageError {
-    margin: 2vh 2vh 2vh 4vh;
+    margin: 1vh 2vh 0vh 2vh;
     font-size: 1.2em;
     font-weight: bold;
     color: #FF5555;
