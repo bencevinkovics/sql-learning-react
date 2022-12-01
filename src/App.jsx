@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from "moment/moment";
 import "./app.css";
 
-
 function App() {
     const [resetInProgress, setResetInProgress] = useState(false);
     const [isDbInitialized, setIsDbInitialized] = useState(false);
@@ -34,8 +33,7 @@ function App() {
     };
 
     useEffect(() => {
-
-        function waitForMessage() {
+        function getDataFromMessage() {
             return new Promise((resolve, reject) => {
                 const resultReturner = (e) => {
                     try {
@@ -49,8 +47,8 @@ function App() {
             });
         }
 
-        async function waitForData() {
-            const response = await waitForMessage();
+        async function processData() {
+            const response = await getDataFromMessage();
             const data = response[1];
             if (data.data != null) {
                 const jsonData = JSON.parse(data);
@@ -67,7 +65,7 @@ function App() {
                 setDataArrived(true);
             }
         }
-        waitForData();
+        processData();
     }, [])
 
     useEffect(() => {
