@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "homepage": "https://bencevinkovics.github.io/sql-learning-react",
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "babel": {
     "presets": [
