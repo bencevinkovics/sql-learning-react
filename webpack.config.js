@@ -37,5 +37,6 @@ module.exports = {
     //3
     devServer: {
         static: path.resolve(__dirname, 'dist'),
+        allowedHosts: "all"
     }
 };
