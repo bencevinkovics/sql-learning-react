@@ -119,12 +119,12 @@ th {
 
 
 textarea {
+    padding: 1.1vh;
     border: none;
     resize: none;
-    margin-left: 1%;
     background-color: #AAAAAA;
     font-size: 1.2em;
-    width: 98%;
+    width: 92%;
 }
 
 textarea:focus {
