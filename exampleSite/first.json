@@ -1,0 +1,35 @@
+[
+    {
+        "sql": "select * from first where col2 = 'Bence'",
+        "tables": [
+            {
+                "name": "first",
+                "tableData": [
+                    {
+                        "id": 1,
+                        "name": "John",
+                        "age": "23"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Anna",
+                        "age": "22"
+                    }
+                ]
+            },
+            {
+                "name": "second",
+                "tableData": [
+                    {
+                        "number": 1,
+                        "animal": "Cow"
+                    },
+                    {
+                        "number": 2,
+                        "animal": "Hamster"
+                    }
+                ]
+            }
+        ]
+    }
+]

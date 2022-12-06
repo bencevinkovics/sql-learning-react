@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    iframe {
+      height: 350px;
+      width: 520px;
+      resize: both;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Container</h2>
+  <textarea id="output" cols="30" rows="10" disabled>awaiting data...</textarea>
+  <div>
+    <input type="text" id="field" size="200" value="type something fun here" />
+    <button id="send">Send</button>
+  </div>
+  <div>
+    <iframe height="350px" width="520px" id="inner" src="http://localhost:3000" frameborder="0"></iframe>
+  </div>
+  <div>
+    <iframe height="350px" width="520px" id="inner2" src="http://localhost:3000" frameborder="0"></iframe>
+  </div>
+  <script>
+    const output = document.getElementById("output");
+    const iframe1 = document.getElementById("inner");
+    const iframe2 = document.getElementById("inner2");
+    const button = document.getElementById("send");
+    const field = document.getElementById("field");
+    let iWindow = null;
+
+    window.onload = start;
+
+    async function start() {
+
+      await fetch("./first.json")
+        .then(response => {
+          return response.json();
+        })
+        .then(data => iWindow1.postMessage(JSON.stringify(data), 'http://localhost:3000'));
+
+      await fetch("./second.json")
+        .then(response => {
+          return response.json();
+        })
+        .then(data => iWindow1.postMessage(JSON.stringify(data), 'http://localhost:3000'));
+
+    };
+
+
+    button.addEventListener("click", () => {
+      console.log('hali')
+      const text = `[{ "col1": 1, "col2": "Bence" },{ "col1": 2, "col2": "Anna" },]`;
+      iWindow.postMessage(text, 'http://localhost:3000');
+    });
+
+    iframe1.addEventListener("load", () => {
+      iWindow1 = iframe1.contentWindow;
+    });
+    iframe2.addEventListener("load", () => {
+      iWindow2 = iframe2.contentWindow;
+
+    });
+  </script>
+</body>
+
+</html>

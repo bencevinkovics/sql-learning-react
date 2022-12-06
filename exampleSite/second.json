@@ -1,0 +1,27 @@
+[
+    {
+        "sql": "SELECT * FROM people",
+        "tables": [
+            {
+                "name": "people",
+                "tableData": [
+                    {
+                        "id": 1,
+                        "name": "John",
+                        "age": "25"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Anna",
+                        "age": "23"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Harold",
+                        "age": "32"
+                    }
+                ]
+            }
+        ]
+    }
+]
