@@ -1,6 +1,6 @@
 ## Az alábbi forráskód a Budapesti Corvinus Egyetemre leadott "Interaktív tananyagok böngészőben futó példaprogramokkal SQL oktatáshoz" című szakdolgozat mellékletének tekintendő.
 
-## A program kipróbálható: https://blue-sky-0e3059503.2.azurestaticapps.net
+### A program kipróbálható: https://blue-sky-0e3059503.2.azurestaticapps.net
 
 ### Készítette: Vinkovics Bence, Gazdaságinformatika alapszakos hallgató - 2022
 
